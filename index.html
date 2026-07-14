@@ -285,6 +285,7 @@ section{position:relative;padding:64px 26px;text-align:center;overflow:hidden}
 /* ================= EFFECTS & ANIMATIONS ================= */
 /* falling petals overlay */
 #petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:205}
+#ytwrap{position:fixed;right:0;bottom:0;width:200px;height:120px;opacity:0;pointer-events:none;overflow:hidden}
 /* Ken Burns slow zoom */
 @keyframes kenburns{from{transform:scale(1.03)}to{transform:scale(1.18)}}
 /* envelope open transition */
@@ -378,6 +379,7 @@ body.opened .amp{animation:heroIn 1.3s .8s forwards}
   <a href="#wishes">Lời chúc</a>
 </nav>
 <canvas id="petals" aria-hidden="true"></canvas>
+<div id="ytwrap" aria-hidden="true"><div id="ytplayer"></div></div>
 
 <div class="wrap">
 
@@ -639,7 +641,7 @@ document.getElementById('openBtn').addEventListener('click',()=>{
 document.body.style.overflow='hidden';
 
 /* ---------- background music: gentle music-box (Web Audio, no file needed) ---------- */
-let audioCtx=null,master=null,padBus=null,wetBus=null,schedTimer=null,step=0,nextT=0,playing=false;
+let audioCtx=null,master=null,padBus=null,wetBus=null,schedTimer=null,step=0,nextT=0,synthOn=false;
 const BPM=70,SPB=60/BPM;
 const NOTE={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function ftone(n){const m=n.match(/^([A-G]#?)(-?\d)$/);return 440*Math.pow(2,((NOTE[m[1]]+(+m[2]+1)*12)-69)/12);}
@@ -674,7 +676,7 @@ function scheduler(){
   while(nextT<audioCtx.currentTime+0.2){ schedStep(step,nextT); nextT+=SPB/2; step++; }
   schedTimer=setTimeout(scheduler,30);
 }
-function startMusic(){
+function synthStart(){
   if(!audioCtx){
     const AC=window.AudioContext||window.webkitAudioContext;
     audioCtx=new AC();
@@ -688,13 +690,39 @@ function startMusic(){
   }
   if(audioCtx.state==='suspended')audioCtx.resume();
   master.gain.setTargetAtTime(0.55,audioCtx.currentTime,0.1);
-  if(!playing){ nextT=audioCtx.currentTime+0.1; scheduler(); playing=true; musicBtn.classList.add('spin'); }
+  if(!synthOn){ nextT=audioCtx.currentTime+0.1; scheduler(); synthOn=true; }
 }
-function stopMusic(){
-  if(schedTimer)clearTimeout(schedTimer);schedTimer=null;playing=false;musicBtn.classList.remove('spin');
+function synthStop(){
+  if(schedTimer)clearTimeout(schedTimer);schedTimer=null;synthOn=false;
   if(master)master.gain.setTargetAtTime(0.0001,audioCtx.currentTime,0.06);
 }
-musicBtn.addEventListener('click',()=>{ playing?stopMusic():startMusic(); });
+
+/* ---------- music controller: YouTube song ("Mình Cưới Nhau Đi"), synth fallback ---------- */
+let ytPlayer=null, ytReady=false, usingYT=false, playing=false;
+const YT_ID='BBRCKcGPmhI';
+window.onYouTubeIframeAPIReady=function(){
+  try{
+    ytPlayer=new YT.Player('ytplayer',{
+      width:'200',height:'120',videoId:YT_ID,
+      playerVars:{autoplay:0,controls:0,loop:1,playlist:YT_ID,modestbranding:1,playsinline:1,rel:0,fs:0},
+      events:{
+        onReady:function(){ ytReady=true; if(playing&&usingYT) ytGo(); },
+        onStateChange:function(e){ if(e.data===0){ try{ytPlayer.playVideo();}catch(_){}} }
+      }
+    });
+  }catch(e){}
+};
+function ytGo(){ try{ ytPlayer.unMute(); ytPlayer.setVolume(70); ytPlayer.playVideo(); }catch(e){} }
+function startMusic(){
+  playing=true; musicBtn.classList.add('spin');
+  if(ytReady&&ytPlayer){ usingYT=true; ytGo(); } else { usingYT=false; synthStart(); }
+}
+function stopMusic(){
+  playing=false; musicBtn.classList.remove('spin');
+  if(usingYT&&ytPlayer){ try{ytPlayer.pauseVideo();}catch(e){} }
+  synthStop();
+}
+musicBtn.addEventListener('click',function(){ playing?stopMusic():startMusic(); });
 
 /* ---------- menu ---------- */
 const nav=document.getElementById('nav');
@@ -845,5 +873,6 @@ document.getElementById('sigSave').addEventListener('click',()=>{
   }
 })();
 </script>
+<script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
