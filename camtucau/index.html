@@ -111,9 +111,8 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 /* ===== ALBUM ===== */
 .album-title{font-family:'Cormorant',serif;font-weight:600;font-size:2.8rem;letter-spacing:10px;color:var(--indigo);text-indent:10px}
 .album-sub{font-family:'Cormorant',serif;font-style:italic;font-size:1.5rem;color:var(--lav);margin-top:2px}
-.grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:150px;grid-auto-flow:dense;gap:9px;margin-top:24px}
-.grid .cell{overflow:hidden;background-image:var(--photo);background-size:cover;background-position:center;box-shadow:0 8px 18px rgba(53,53,98,.12);filter:drop-shadow(0 2px 4px rgba(53,53,98,.05))}
-.grid .cell.h2{grid-row:span 2}
+.grid{columns:2;column-gap:9px;margin-top:24px}
+.grid .cell{break-inside:avoid;margin-bottom:9px;overflow:hidden;background-image:var(--photo);background-size:cover;background-position:center;box-shadow:0 8px 18px rgba(53,53,98,.12)}
 
 /* ===== DRESSCODE ===== */
 .swatches{display:flex;gap:12px;justify-content:center;margin-top:22px}
@@ -209,7 +208,7 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 .person.groom .pf .photo{background-position:70% 24%}
 /* album bo tròn + vòm */
 .grid .cell{border-radius:16px}
-.grid .cell.h2{border-radius:110px 110px 16px 16px}
+.grid .cell.arch{border-radius:110px 110px 16px 16px}
 /* lưu bút */
 .sign-board{max-width:340px;margin:22px auto 0;background:#fff;border-radius:14px;box-shadow:0 10px 24px rgba(53,53,98,.1);padding:16px;min-height:108px}
 .sign-list{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
@@ -612,8 +611,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 /* ---------- album grid ---------- */
 (function(){
-  var cells=[['h2','30% 12%'],['h1','75% 20%'],['h1','20% 45%'],['h1','65% 60%'],['h1','45% 10%'],['h2','58% 30%'],['h1','22% 22%'],['h1','78% 45%']];
-  cells.forEach(function(c){var d=document.createElement('div');d.className='cell '+c[0];d.style.backgroundPosition=c[1];document.getElementById('grid').appendChild(d);});
+  var cells=[[300,'30% 12%','arch'],[150,'75% 20%',''],[190,'20% 45%',''],[160,'65% 60%',''],[150,'45% 10%',''],[300,'58% 30%','arch'],[190,'22% 22%',''],[160,'78% 45%','']];
+  cells.forEach(function(c){var d=document.createElement('div');d.className='cell '+c[2];d.style.height=c[0]+'px';d.style.backgroundPosition=c[1];document.getElementById('grid').appendChild(d);});
 })();
 
 /* ---------- countdown ---------- */
