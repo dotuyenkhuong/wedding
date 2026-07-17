@@ -159,6 +159,14 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 .music-btn svg{width:20px;height:20px}
 .music-btn.spin svg{animation:spin 4s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* gentle float on the paper flowers */
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hydra>svg{animation:floatY 7s ease-in-out infinite}
+.hydra:nth-of-type(2n)>svg{animation-duration:8.5s;animation-delay:.7s}
+.hydra:nth-of-type(3n)>svg{animation-duration:6.2s;animation-delay:.3s}
+.reveal{transition:opacity 1.2s cubic-bezier(.22,.61,.36,1),transform 1.2s cubic-bezier(.22,.61,.36,1)}
+/* hidden youtube player */
+#ytwrap{position:fixed;right:0;bottom:0;width:200px;height:120px;opacity:0;pointer-events:none;overflow:hidden}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -353,23 +361,31 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 <button class="music-btn" id="musicBtn" title="Nhạc">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
 </button>
+<div id="ytwrap" aria-hidden="true"><div id="ytplayer"></div></div>
 
 <script>
 /* ---------- white paper-craft hydrangea (SVG) ---------- */
 (function(){
   const NS='http://www.w3.org/2000/svg';
+  var PETAL='M0 0 C -3.3 -3 -4.4 -8 -1 -12.7 C -0.3 -13.4 0.3 -13.4 1 -12.7 C 4.4 -8 3.3 -3 0 0 Z';
   function floret(g,x,y,s,rot){
     const fg=document.createElementNS(NS,'g');
     fg.setAttribute('transform','translate('+x+' '+y+') rotate('+rot+') scale('+s+')');
     fg.setAttribute('filter','url(#pf-sh)');
     for(let k=0;k<5;k++){
-      const p=document.createElementNS(NS,'ellipse');
-      p.setAttribute('cx',0);p.setAttribute('cy',-6.2);p.setAttribute('rx',4.1);p.setAttribute('ry',6.4);
-      p.setAttribute('fill','url(#pf-g)');p.setAttribute('stroke','#e3e3ec');p.setAttribute('stroke-width','.4');
+      const p=document.createElementNS(NS,'path');
+      p.setAttribute('d',PETAL);p.setAttribute('fill','url(#petg)');
+      p.setAttribute('stroke','#e8e8f1');p.setAttribute('stroke-width','.3');
       p.setAttribute('transform','rotate('+(k*72)+')');
       fg.appendChild(p);
     }
-    const c=document.createElementNS(NS,'circle');c.setAttribute('r',2.1);c.setAttribute('fill','#d7d7e2');fg.appendChild(c);
+    for(let k=0;k<5;k++){
+      const p=document.createElementNS(NS,'path');
+      p.setAttribute('d',PETAL);p.setAttribute('fill','url(#petg2)');
+      p.setAttribute('transform','rotate('+(k*72+36)+') scale(0.6)');
+      fg.appendChild(p);
+    }
+    const c=document.createElementNS(NS,'circle');c.setAttribute('r',1.6);c.setAttribute('fill','#cbcbda');fg.appendChild(c);
     g.appendChild(fg);
   }
   function leaf(g,x,y,s,rot){
@@ -378,15 +394,17 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
     lg.setAttribute('filter','url(#pf-sh)');
     const p=document.createElementNS(NS,'path');
     p.setAttribute('d','M0 0 Q 9 -16 0 -34 Q -9 -16 0 0 Z');
-    p.setAttribute('fill','url(#pf-g)');p.setAttribute('stroke','#e3e3ec');p.setAttribute('stroke-width','.4');
+    p.setAttribute('fill','url(#leafg)');p.setAttribute('stroke','#e3e3ec');p.setAttribute('stroke-width','.4');
     lg.appendChild(p);
     const v=document.createElementNS(NS,'path');v.setAttribute('d','M0 -1 L0 -31');v.setAttribute('stroke','#dcdce6');v.setAttribute('stroke-width','.8');v.setAttribute('fill','none');lg.appendChild(v);
     g.appendChild(lg);
   }
   function defs(svg){
     const d=document.createElementNS(NS,'defs');
-    d.innerHTML='<radialGradient id="pf-g" cx="42%" cy="34%" r="75%"><stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#f3f3f7"/><stop offset="100%" stop-color="#e4e4ee"/></radialGradient>'
-      +'<filter id="pf-sh" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.9" flood-color="#a9a9bd" flood-opacity="0.38"/></filter>';
+    d.innerHTML='<linearGradient id="petg" x1="0.5" y1="1" x2="0.5" y2="0"><stop offset="0" stop-color="#d5d5e4"/><stop offset="0.5" stop-color="#eeeef5"/><stop offset="1" stop-color="#ffffff"/></linearGradient>'
+      +'<linearGradient id="petg2" x1="0.5" y1="1" x2="0.5" y2="0"><stop offset="0" stop-color="#c4c4d8"/><stop offset="0.55" stop-color="#e6e6f0"/><stop offset="1" stop-color="#fbfbff"/></linearGradient>'
+      +'<linearGradient id="leafg" x1="0.5" y1="1" x2="0.5" y2="0"><stop offset="0" stop-color="#cfcfde"/><stop offset="1" stop-color="#f8f8fc"/></linearGradient>'
+      +'<filter id="pf-sh" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.7" flood-color="#9797af" flood-opacity="0.42"/></filter>';
     svg.appendChild(d);
   }
   function build(el,R,type){
@@ -401,7 +419,7 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
       // leaves first (behind)
       const nl=Math.max(2,Math.round(R/40));
       for(let i=0;i<nl;i++){const a=Math.random()*6.28,rr=R*0.5;leaf(svg,R+Math.cos(a)*rr,R+Math.sin(a)*rr,(R/70)*(0.8+Math.random()*0.5),Math.random()*360);}
-      const nf=Math.max(14,Math.round(R/3.4));
+      const nf=Math.max(12,Math.round(R/4));
       for(let i=0;i<nf;i++){const a=Math.random()*6.28,rr=Math.sqrt(Math.random())*R*0.82;floret(svg,R+Math.cos(a)*rr,R+Math.sin(a)*rr,(R/135)*(0.72+Math.random()*0.5),Math.random()*72);}
     }
     el.appendChild(svg);
@@ -426,7 +444,7 @@ tick();setInterval(tick,1000);
 document.getElementById('rsvpForm').addEventListener('submit',function(e){e.preventDefault();this.style.display='none';document.getElementById('thanks').classList.add('show');});
 
 /* ---------- music-box (Web Audio) ---------- */
-let ac=null,mst=null,pad=null,wet=null,tm=null,stp=0,nx=0,on=false;
+let ac=null,mst=null,pad=null,wet=null,tm=null,stp=0,nx=0,synthOn=false;
 const musicBtn=document.getElementById('musicBtn');
 const BPM=68,SPB=60/BPM,NO={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function f(n){const m=n.match(/^([A-G]#?)(-?\d)$/);return 440*Math.pow(2,((NO[m[1]]+(+m[2]+1)*12)-69)/12);}
@@ -435,11 +453,19 @@ function bell(t,fr,dur,v){const o=ac.createOscillator();o.type='triangle';o.freq
 function pd(t,fr,dur){const o=ac.createOscillator();o.type='sine';o.frequency.value=fr;const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.045,t+.35);g.gain.setValueAtTime(.045,t+dur-.3);g.gain.linearRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(pad);o.start(t);o.stop(t+dur+.05);}
 function step(i,t){const b=Math.floor(i/2)%8,ch=PR[b],e=i%2;if(e===0){pd(t,f(ch[0]),SPB*1.05);pd(t,f(ch[0])*1.5,SPB*1.05);}bell(t,f(e===0?ch[1]:ch[2]),SPB*.95,.14);if(i%4===0)bell(t,f(ch[2])*2,SPB*1.5,.05);}
 function sch(){while(nx<ac.currentTime+.2){step(stp,nx);nx+=SPB/2;stp++;}tm=setTimeout(sch,30);}
-function startM(){if(!ac){const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4000;lp.connect(ac.destination);mst=ac.createGain();mst.gain.value=.5;mst.connect(lp);pad=ac.createGain();pad.gain.value=.6;pad.connect(lp);const dl=ac.createDelay();dl.delayTime.value=.28;const fb=ac.createGain();fb.gain.value=.3;wet=ac.createGain();wet.gain.value=.3;wet.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(lp);}if(ac.state==='suspended')ac.resume();mst.gain.setTargetAtTime(.5,ac.currentTime,.1);if(!on){nx=ac.currentTime+.1;sch();on=true;musicBtn.classList.add('spin');}}
-function stopM(){if(tm)clearTimeout(tm);tm=null;on=false;musicBtn.classList.remove('spin');if(mst)mst.gain.setTargetAtTime(.0001,ac.currentTime,.06);}
-musicBtn.addEventListener('click',()=>{on?stopM():startM();});
-function fg(){startM();window.removeEventListener('pointerdown',fg);}
+function synthStart(){if(!ac){const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4000;lp.connect(ac.destination);mst=ac.createGain();mst.gain.value=.5;mst.connect(lp);pad=ac.createGain();pad.gain.value=.6;pad.connect(lp);const dl=ac.createDelay();dl.delayTime.value=.28;const fb=ac.createGain();fb.gain.value=.3;wet=ac.createGain();wet.gain.value=.3;wet.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(lp);}if(ac.state==='suspended')ac.resume();mst.gain.setTargetAtTime(.5,ac.currentTime,.1);if(!synthOn){nx=ac.currentTime+.1;sch();synthOn=true;}}
+function synthStop(){if(tm)clearTimeout(tm);tm=null;synthOn=false;if(mst)mst.gain.setTargetAtTime(.0001,ac.currentTime,.06);}
+
+/* YouTube song ("Mình Cưới Nhau Đi"), synth fallback */
+let ytPlayer=null,ytReady=false,usingYT=false,playing=false;const YT_ID='BBRCKcGPmhI';
+window.onYouTubeIframeAPIReady=function(){try{ytPlayer=new YT.Player('ytplayer',{width:'200',height:'120',videoId:YT_ID,playerVars:{autoplay:0,controls:0,loop:1,playlist:YT_ID,modestbranding:1,playsinline:1,rel:0,fs:0},events:{onReady:function(){ytReady=true;if(playing&&usingYT)ytGo();},onStateChange:function(e){if(e.data===0){try{ytPlayer.playVideo();}catch(_){}}}}});}catch(e){}};
+function ytGo(){try{ytPlayer.unMute();ytPlayer.setVolume(70);ytPlayer.playVideo();}catch(e){}}
+function startMusic(){playing=true;musicBtn.classList.add('spin');if(ytReady&&ytPlayer){usingYT=true;ytGo();}else{usingYT=false;synthStart();}}
+function stopMusic(){playing=false;musicBtn.classList.remove('spin');if(usingYT&&ytPlayer){try{ytPlayer.pauseVideo();}catch(e){}}synthStop();}
+musicBtn.addEventListener('click',()=>{playing?stopMusic():startMusic();});
+function fg(){startMusic();window.removeEventListener('pointerdown',fg);}
 window.addEventListener('pointerdown',fg,{once:true});
 </script>
+<script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
