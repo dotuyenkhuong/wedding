@@ -50,16 +50,17 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 
 /* ===== HERO ===== */
 #hero{padding:0 0 40px}
-.hero-flowers{position:relative;height:0;z-index:1}
-.hero-photo-wrap{position:relative;margin:0 18px;padding-top:64px}
-.hero-mono{position:relative;z-index:5;text-align:center;margin-bottom:-30px}
-.hero-mono .m{font-family:'Cormorant',serif;font-weight:600;font-size:4.6rem;color:var(--indigo);line-height:.8;letter-spacing:-8px}
-.hero-mono .m .amp{font-style:italic;font-weight:500;font-size:2.4rem;color:var(--indigo-2)}
-.hero-photo{height:400px}
-.hero-info{margin-top:22px;padding:0 30px;position:relative;z-index:2}
-.hero-names{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2rem;color:var(--indigo);letter-spacing:.5px}
-.hero-date{font-family:'Montserrat';letter-spacing:5px;font-size:.9rem;color:var(--indigo);margin-top:6px}
-.hero-invite{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--indigo);margin:40px auto 0;max-width:320px;line-height:1.5}
+.hero-band{position:relative;height:215px;z-index:3;margin:0 -14px;pointer-events:none}
+.hero-photo-wrap{position:relative;margin:-125px 0 0;z-index:4}
+.hero-mono{position:absolute;top:-64px;left:50%;transform:translateX(-50%);z-index:6;width:212px}
+.hero-mono .mono-img{width:100%}
+.torn-diag{position:relative;height:480px;filter:drop-shadow(0 14px 26px rgba(53,53,98,.22))}
+.torn-diag .rim{position:absolute;inset:0;background:#fcfcfe;clip-path:polygon(0% 11%,8% 9.9%,16% 11.3%,25% 9.2%,34% 10.1%,43% 8%,52% 8.7%,61% 6.6%,70% 7.3%,79% 5%,88% 5.7%,100% 3.2%,100% 98.4%,88% 97.3%,76% 97.9%,64% 96%,52% 96.7%,40% 94.8%,28% 95.5%,16% 93.6%,8% 94.3%,0% 92.6%)}
+.torn-diag .photo{position:absolute;inset:0;background-image:var(--photo);background-size:cover;background-position:center 24%;background-color:#cdd0e4;clip-path:polygon(0% 13.2%,8% 12.1%,16% 13.5%,25% 11.4%,34% 12.3%,43% 10.2%,52% 10.9%,61% 8.8%,70% 9.5%,79% 7.2%,88% 7.9%,100% 5.4%,100% 96.2%,88% 95.1%,76% 95.7%,64% 93.8%,52% 94.5%,40% 92.6%,28% 93.3%,16% 91.4%,8% 92.1%,0% 90.4%)}
+.hero-names-r{text-align:right;padding:16px 28px 0;position:relative;z-index:2}
+.hero-names-r .hn{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.7rem;color:var(--indigo)}
+.hero-names-r .hd{font-family:'Montserrat';letter-spacing:5px;font-size:.8rem;color:var(--indigo-2);margin-top:6px}
+.hero-invite{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--indigo);margin:44px auto 0;max-width:320px;line-height:1.5}
 
 /* ===== INVITATION ===== */
 .big-names{font-family:'Cormorant',serif;font-weight:600;color:var(--indigo);line-height:1.02;margin-top:6px}
@@ -238,26 +239,24 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 
   <!-- ===== HERO ===== -->
   <section id="hero">
-    <!-- top flower band -->
-    <div class="hero-flowers">
-      <div class="hydra" data-r="115" data-t="cluster" style="top:-10px;left:-24px"></div>
-      <div class="hydra" data-r="95" data-t="cluster" style="top:-18px;left:120px"></div>
-      <div class="hydra" data-r="120" data-t="cluster" style="top:-14px;right:-30px"></div>
-      <div class="hydra" data-r="30" data-t="floret" style="top:150px;left:14px"></div>
-      <div class="hydra" data-r="26" data-t="floret" style="top:120px;right:26px"></div>
-    </div>
+    <!-- thảm hoa dày phủ kín đầu trang -->
+    <div class="hero-band" id="heroBand"></div>
     <div class="hero-photo-wrap reveal">
       <div class="hero-mono"><img class="mono-img" src="monogram.png" alt="Khương & Anh"></div>
-      <div class="torn"><div class="photo hero-photo"></div></div>
-      <div class="hydra" data-r="40" data-t="floret" style="bottom:-24px;left:-10px"></div>
-      <div class="hydra" data-r="34" data-t="floret" style="bottom:-30px;right:0"></div>
+      <div class="torn-diag">
+        <div class="rim"></div>
+        <div class="photo"></div>
+      </div>
+      <div class="hydra" data-r="36" data-t="floret" style="bottom:8px;left:12px;z-index:5"></div>
+      <div class="hydra" data-r="22" data-t="floret" style="bottom:66px;left:66px;z-index:5"></div>
+      <div class="hydra" data-r="26" data-t="floret" style="top:40%;right:-4px;z-index:5"></div>
     </div>
-    <div class="hero-info reveal">
-      <div class="hero-names">Khương Đỗ <span class="script" style="color:var(--indigo-2)">&amp;</span> Quỳnh Anh</div>
-      <div class="hero-date">25 . 09 . 2026</div>
+    <div class="hero-names-r reveal">
+      <div class="hn">Khương Đỗ &amp; Quỳnh Anh</div>
+      <div class="hd">25 . 09 . 2026</div>
     </div>
+    <div class="hydra" data-r="42" data-t="floret" style="bottom:16px;left:38px"></div>
     <div class="hero-invite reveal">Thân mời đến dự lễ thành hôn của chúng tôi!</div>
-    <div class="hydra" data-r="30" data-t="floret" style="bottom:20px;left:24px"></div>
   </section>
 
   <!-- ===== INVITATION ===== -->
@@ -565,6 +564,28 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
     svg.appendChild(d);
   }
   function build(el,R,type){
+    if(type==='band'){
+      const Wd=el.offsetWidth||460,Ht=+el.dataset.h||215;
+      const svg=document.createElementNS(NS,'svg');
+      svg.setAttribute('viewBox','0 0 '+Wd+' '+Ht);svg.setAttribute('width','100%');svg.setAttribute('height',Ht+'px');
+      svg.setAttribute('overflow','visible');
+      defs(svg);
+      // lá to phía sau
+      for(let i=0;i<9;i++){leaf(svg,Math.random()*Wd,18+Math.random()*Ht*0.62,2.1+Math.random()*1.5,Math.random()*360);}
+      // 6 chùm hoa lớn chồng lấn nhau
+      const heads=6;
+      for(let h=0;h<heads;h++){
+        const cx=Wd*(h+0.5)/heads+(Math.random()-0.5)*46, cy=26+Math.random()*68, CR=64+Math.random()*46;
+        const nf=Math.round(CR/3.2);
+        for(let i=0;i<nf;i++){
+          const a=Math.random()*6.28,rr=Math.sqrt(Math.random())*CR*0.85;
+          floret(svg,cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*0.8,(CR/120)*(0.7+Math.random()*0.5),Math.random()*72);
+        }
+      }
+      // hoa lẻ rơi rớt ở mép dưới
+      for(let i=0;i<15;i++){floret(svg,Math.random()*Wd,Ht*(0.56+Math.random()*0.4),0.42+Math.random()*0.5,Math.random()*72);}
+      el.appendChild(svg);return;
+    }
     const D=2*R;
     const svg=document.createElementNS(NS,'svg');
     svg.setAttribute('viewBox','0 0 '+D+' '+D);svg.setAttribute('width',D+'px');svg.setAttribute('height',D+'px');
@@ -582,6 +603,7 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
     el.appendChild(svg);
   }
   document.querySelectorAll('.hydra').forEach(el=>build(el,+el.dataset.r||70,el.dataset.t||'cluster'));
+  const hb=document.getElementById('heroBand');if(hb)build(hb,0,'band');
 })();
 
 /* ---------- reveal ---------- */
