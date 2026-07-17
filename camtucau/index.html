@@ -167,37 +167,20 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 .reveal{transition:opacity 1.2s cubic-bezier(.22,.61,.36,1),transform 1.2s cubic-bezier(.22,.61,.36,1)}
 /* hidden youtube player */
 #ytwrap{position:fixed;right:0;bottom:0;width:200px;height:120px;opacity:0;pointer-events:none;overflow:hidden}
-/* ===== intro cover (envelope) ===== */
-#cover{position:fixed;inset:0;z-index:300;background:radial-gradient(circle at 50% 42%,#e6e3ef,#d5d1e1);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transition:opacity .9s ease,visibility .9s}
-#cover.hide{opacity:0;visibility:hidden}
-.env-stage{position:relative;width:min(84vw,380px)}
+/* ===== envelope section — ảnh bay vào phong bì (trong trang) ===== */
+#env-sec{background:radial-gradient(circle at 50% 45%,#e7e4f0,#d6d2e2);padding:54px 0;overflow:hidden}
+.env-stage{position:relative;width:min(88%,380px);margin:0 auto}
 .envelope{width:100%;display:block;filter:drop-shadow(0 16px 30px rgba(53,53,98,.16))}
 .fly{position:absolute;top:46%;left:50%;width:116px;height:148px;margin:-88px 0 0 -58px;border-radius:6px;border:5px solid #fff;background-image:var(--photo);background-size:cover;background-position:center;box-shadow:0 12px 26px rgba(53,53,98,.32);opacity:0}
 @keyframes fly1{0%{transform:translate(-320px,-300px) rotate(-24deg) scale(1.12);opacity:0}12%{opacity:1}58%{transform:translate(0,-52px) rotate(-4deg) scale(.72);opacity:1}86%{transform:translate(0,4px) rotate(0) scale(.42);opacity:1}100%{transform:translate(0,42px) rotate(0) scale(.3);opacity:0}}
 @keyframes fly2{0%{transform:translate(322px,-322px) rotate(24deg) scale(1.12);opacity:0}12%{opacity:1}58%{transform:translate(0,-52px) rotate(4deg) scale(.72);opacity:1}86%{transform:translate(0,4px) rotate(0) scale(.42);opacity:1}100%{transform:translate(0,42px) rotate(0) scale(.3);opacity:0}}
-.p1{animation:fly1 2.5s ease-in-out .5s forwards}
-.p2{animation:fly2 2.5s ease-in-out 1.2s forwards}
-.cover-mono{width:min(58vw,215px);margin-top:22px;opacity:0;animation:covfade 1s 3.6s forwards}
-.cover-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:var(--lav);margin-top:4px;opacity:0;animation:covfade 1s 3.9s forwards}
-.cover-btn{margin-top:22px;font-family:'Montserrat';letter-spacing:3px;font-size:.72rem;text-transform:uppercase;color:#fff;background:var(--indigo);border:none;border-radius:26px;padding:13px 32px;cursor:pointer;opacity:0;animation:covfade 1s 4.2s forwards;box-shadow:0 8px 20px rgba(53,53,98,.25)}
-@keyframes covfade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#env-sec.play .p1{animation:fly1 2.6s ease-in-out .2s forwards}
+#env-sec.play .p2{animation:fly2 2.6s ease-in-out .9s forwards}
 .mono-img{width:174px;margin:0 auto;display:block}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-
-<!-- ===== INTRO COVER ===== -->
-<div id="cover">
-  <div class="env-stage">
-    <img class="envelope" src="envelope.png" alt="">
-    <div class="fly p1"></div>
-    <div class="fly p2"></div>
-  </div>
-  <img class="cover-mono" src="monogram.png" alt="Khương & Anh">
-  <div class="cover-sub">Thân mời tới dự lễ thành hôn</div>
-  <button class="cover-btn" id="openBtn">Mở thiệp</button>
-</div>
 
 <div class="wrap">
 
@@ -270,6 +253,15 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
         <div class="sep">:</div>
         <div class="b"><div class="num" id="cd-s">00</div><div class="lab">Seconds</div></div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== ENVELOPE — ảnh bay vào phong bì ===== -->
+  <section id="env-sec">
+    <div class="env-stage">
+      <img class="envelope" src="envelope.png" alt="">
+      <div class="fly p1"></div>
+      <div class="fly p2"></div>
     </div>
   </section>
 
@@ -392,14 +384,14 @@ section{position:relative;padding:64px 30px;text-align:center;overflow:visible}
 <div id="ytwrap" aria-hidden="true"><div id="ytplayer"></div></div>
 
 <script>
-/* ---------- intro cover: photos fly into envelope ---------- */
-document.body.style.overflow='hidden';
-document.getElementById('openBtn').addEventListener('click',function(){
-  var c=document.getElementById('cover');c.classList.add('hide');
-  document.body.style.overflow='';
-  startMusic();
-  setTimeout(function(){c.style.display='none';},900);
-});
+/* ---------- envelope section: photos fly in when scrolled into view ---------- */
+(function(){
+  var s=document.getElementById('env-sec');if(!s)return;
+  var o=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){s.classList.add('play');o.disconnect();}
+  });},{threshold:.45});
+  o.observe(s);
+})();
 
 /* ---------- white paper-craft hydrangea (SVG) ---------- */
 (function(){
